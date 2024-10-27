@@ -1,5 +1,0 @@
-Imli,100,0,100,100,Cat,Vrishab
-v,75,0,100,100,Dog,V
-john,100,0,100,100,Dog,aaron
-Jimmy,100,0,100,100,Cat,dish
-j,97,0,95,91,Cat,Vrishab
