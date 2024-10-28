@@ -17,31 +17,52 @@ import java.util.LinkedList;
 public class PetSave {
 
     // Save Pet to Database
- public static void savePet(Pet pet) throws SQLException {
+public static void savePet(Pet pet) throws SQLException {
     Connection conn = Database.getConnection();
     if (conn == null || conn.isClosed()) {
         System.err.println("No current connection.");
         return;
     }
 
-    String insertPetSQL = "INSERT INTO vrishab.pets (name, type, hunger, fun, sleep, owner) VALUES (?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement pstmt = conn.prepareStatement(insertPetSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
-        // Set the parameters for the prepared statement
-        pstmt.setString(1, pet.getName());
-        pstmt.setString(2, pet.getPetType());
-        pstmt.setInt(3, pet.getHunger());
-        pstmt.setInt(4, pet.getFun());
-        pstmt.setInt(5, pet.getSleep());
-        pstmt.setInt(6, pet.getOwnerId());
+    // Check if pet already exists in the database
+    String checkPetSQL = "SELECT id FROM vrishab.pets WHERE id = ?";
+    try (PreparedStatement checkStmt = conn.prepareStatement(checkPetSQL)) {
+        checkStmt.setInt(1, pet.getPetId());
+        ResultSet rs = checkStmt.executeQuery();
 
-        // Execute the update and retrieve the generated keys
-        pstmt.executeUpdate();
-        ResultSet generatedKeys = pstmt.getGeneratedKeys();
-        if (generatedKeys.next()) {
-            pet.setPetId(generatedKeys.getInt(1));
-            System.out.println("Pet saved with generated ID: " + pet.getPetId());
+        if (rs.next()) {
+            // Pet exists, perform an UPDATE
+            String updatePetSQL = "UPDATE vrishab.pets SET name = ?, type = ?, hunger = ?, fun = ?, sleep = ?, owner = ? WHERE id = ?";
+            try (PreparedStatement updateStmt = conn.prepareStatement(updatePetSQL)) {
+                updateStmt.setString(1, pet.getName());
+                updateStmt.setString(2, pet.getPetType());
+                updateStmt.setInt(3, pet.getHunger());
+                updateStmt.setInt(4, pet.getFun());
+                updateStmt.setInt(5, pet.getSleep());
+                updateStmt.setInt(6, pet.getOwnerId());
+                updateStmt.setInt(7, pet.getPetId());
+                updateStmt.executeUpdate();
+                System.out.println("Pet updated in database with ID: " + pet.getPetId());
+            }
+        } else {
+            // Pet does not exist, perform an INSERT
+            String insertPetSQL = "INSERT INTO vrishab.pets (name, type, hunger, fun, sleep, owner) VALUES (?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertPetSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                insertStmt.setString(1, pet.getName());
+                insertStmt.setString(2, pet.getPetType());
+                insertStmt.setInt(3, pet.getHunger());
+                insertStmt.setInt(4, pet.getFun());
+                insertStmt.setInt(5, pet.getSleep());
+                insertStmt.setInt(6, pet.getOwnerId());
+
+                insertStmt.executeUpdate();
+                ResultSet generatedKeys = insertStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    pet.setPetId(generatedKeys.getInt(1)); // Set the generated ID for the new pet
+                    System.out.println("New pet saved with generated ID: " + pet.getPetId());
+                }
+            }
         }
-
     } catch (SQLException e) {
         e.printStackTrace();
     }
