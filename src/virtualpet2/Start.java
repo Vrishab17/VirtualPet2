@@ -1,11 +1,17 @@
 package virtualpet2;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Start {
 
-    public static void Start() {
+    public static void Start() throws SQLException {
+        Database.connect();
+        if (Database.getConnection() == null) {
+            System.err.println("Failed to connect to the database.");
+            return;
+        }
 
         // Display the ASCII art for the game title.
         Art.displayAsciiArt();
@@ -28,17 +34,20 @@ public class Start {
             }
 
             // Load existing pets and players from save files
-            LinkedList<Pet> pets = PetSave.loadPets();
-            LinkedList<Player> players = PlayerSave.loadPlayers();
+//            LinkedList<Pet> pets = PetSave.loadPets();
+//            LinkedList<Player> players = PlayerSave.loadPlayers();
+                Database.createPlayerTable();            
+                Database.createPetTable();
+            
 
             // Find the player based on the entered name, or create a new player if not found.
-            Player player = PlayerSave.findPlayer(players, playerName);
+//            Player player = PlayerSave.findPlayer(players, playerName);
+            Player player = PlayerSave.loadPlayerByName(playerName);
 
             if (player == null) {
                 System.out.println("\n**New User Created** \n");
-                player = new Player(playerName);
-                players.add(player);
-                PlayerSave.savePlayers(players); // Save the new player
+                player = new Player(0, playerName); // 0 indicates a new player
+                PlayerSave.savePlayer(player); // Save the new player to the database
             } else {
                 System.out.println("\n**Welcome back " + playerName + "**\n");
             }
@@ -47,14 +56,14 @@ public class Start {
             OUTER:
             while (true) {
 
-                 // Display the main menu.
+                // Display the main menu.
                 System.out.println("________________________");
                 System.out.println(Art.GREEN + "Use numbers to choose" + Art.RESET);
                 System.out.println("1: Create New Pet");
                 System.out.println("2: Play With My Existing Pet");
                 System.out.println("3: Show all Pets");
                 System.out.println("4: Provide Feedback");
-                
+
                 //Get player choice
                 String choice = scanner.next();
 
@@ -63,10 +72,10 @@ public class Start {
                     System.out.println("Goodbye!");
                     break;
                 }
-                
+
                 //Initilize variable
                 int startOption;
-                
+
                 //Convert user input into integer
                 try {
                     startOption = Integer.parseInt(choice);
@@ -74,7 +83,7 @@ public class Start {
                     System.err.println("Invalid input. Please enter a number (1, 2, or 3).");
                     continue; // Go back to the beginning of the loop
                 }
-                
+
                 // Handle the user's choice based on the selected menu option
                 switch (startOption) {
                     case 1: {
@@ -82,15 +91,15 @@ public class Start {
                         System.out.println("Enter a name for your new pet:");
                         scanner.nextLine(); // Consume newline
                         String petName = scanner.nextLine();
-                        
+
                         // Check if the player wants to exit the game
                         if (petName.equalsIgnoreCase("exit")) {
                             System.out.println("Goodbye!");
                             break OUTER;// Exit the main loop
                         }
-                        
+
                         // Check if the pet name already exists
-                        Pet pet = PetSave.findPet(pets, petName);
+                        Pet pet = PetSave.loadPetByNameAndOwner(petName, player.getPlayerId());
                         if (pet != null) {
                             System.err.println("Pet already exists!");
                         } else {
@@ -125,13 +134,9 @@ public class Start {
                                 }
                             }
                             // Create the new pet and add it to the player's collection
-                            Pet newPet = new Pet(petName, 100, 0, 100, 100, petType, playerName);
-                            System.out.println(newPet.getPetType());
-
+                            Pet newPet = new Pet(0, petName, 100, 0, 100, 100, petType, player.getPlayerId());
                             player.addPet(newPet);
-                            pets.add(newPet); // Add the new pet to the list of all pets
-                            PetSave.savePets(pets); // Save the updated list of pets
-                            PlayerSave.savePlayers(players); // Save the updated list of players
+                            PetSave.savePet(newPet);
 
                             System.out.println(Art.YELLOW + "Pet " + petName + " has been created!\n" + Art.RESET);
                         }
@@ -177,14 +182,13 @@ public class Start {
 
                     case 3:
                         // Option 3: Show all pets
-                        LinkedList<Pet> allPets = PetSave.loadPets(); // Load all pets from storage
+                        LinkedList<Pet> allPets = PetSave.loadAllPets();
                         if (allPets.isEmpty()) {
                             System.out.println("\nNo pets found.");
                         } else {
-                            // Display a list of all pets with their owners
                             System.out.println("\nList of all pets:");
                             for (Pet pet : allPets) {
-                                System.out.println(Art.GREEN + "- " + Art.RESET + pet.getName() + " the " + pet.getPetType() + " (Owner: " + pet.getOwner() + ")");
+                                System.out.println(Art.GREEN + "- " + Art.RESET + pet.getName() + " the " + pet.getPetType() + " (Owner ID: " + pet.getOwnerId() + ")");
                             }
                         }
                         break;

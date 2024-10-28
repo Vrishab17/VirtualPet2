@@ -8,187 +8,123 @@ package virtualpet2;
  *
  * @author vrish
  */
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
-import java.io.File;
 
 public class PlayerSave {
 
-    // Constants for file names used to store player data.
-    private static final String FILE_NAME = "players.txt";
-    private static final String FILE_NAME_TEMP = "players_tmp.txt";
-
-    /**
-     * Saves the list of players and their pets to a file. This method first 
-     * reads the existing file content, updates it with new data, and then 
-     * writes the updated content to a temporary file. Finally, the temporary 
-     * file replaces the original file.
-     * 
-     * @param players The list of players to be saved.
-     */
-    public static void savePlayers(LinkedList<Player> players) {
-        File file = new File(FILE_NAME);
-        LinkedList<String> fileContent = new LinkedList<>();
-
-        // Read the existing file content
-        if (file.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    fileContent.add(line); // Add each line to the fileContent list
-                }
-            } catch (IOException e) {
-                System.err.println("Error reading player data from file: " + e.getMessage());
-                return;
-            }
-        }
-
-        // Remove old data for each player
-        for (Player player : players) {
-            int start = -1;
-            int end = -1;
-            for (int i = 0; i < fileContent.size(); i++) {
-                if (fileContent.get(i).equals(player.getPlayerName())) {
-                    start = i; // Mark the start of the player's data block
-                }
-                if (start != -1 && fileContent.get(i).equals("---")) {
-                    end = i; // Mark the end of the player's data block
-                    break;
-                }
-            }
-            if (start != -1 && end != -1) {
-                // Remove the old block of data for this player
-                for (int i = end; i >= start; i--) {
-                    fileContent.remove(i);
-                }
-            }
-        }
-
-        // Write the updated file content
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME_TEMP))) {
-            // Write remaining (unaffected) data
-            for (String line : fileContent) {
-                writer.write(line);
-                writer.newLine();
-            }
-
-            // Write new/updated data for each player
-            for (Player player : players) {
-                writer.write(player.getPlayerName());
-                writer.newLine();
-                for (Pet pet : player.getPets()) {
-                    // Save the pet name, owner, and type
-                    writer.write(pet.getName() + "," + pet.getOwner() + "," + pet.getPetType());
-                    writer.newLine();
-                }
-                writer.write("---");
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing player data to file: " + e.getMessage());
-            return;
-        }
-
-        // Replace the original file with the temporary file
-        replaceFile(FILE_NAME_TEMP, FILE_NAME);
+    // Save Player to Database
+    public static void savePlayer(Player player) throws SQLException {
+    Connection conn = Database.getConnection();
+    if (conn == null || conn.isClosed()) {
+        System.err.println("No current connection.");
+        return;
     }
 
-    /**
-     * Replaces the original file with the updated file.
-     * 
-     * @param tempFileName The name of the temporary file.
-     * @param originalFileName The name of the original file to be replaced.
-     */
-    private static void replaceFile(String tempFileName, String originalFileName) {
-        File tempFile = new File(tempFileName);
-        File originalFile = new File(originalFileName);
+    String insertPlayerSQL = "INSERT INTO vrishab.players (name) VALUES (?)";
+    try (PreparedStatement pstmt = conn.prepareStatement(insertPlayerSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        pstmt.setString(1, player.getPlayerName());
+        pstmt.executeUpdate();
 
-        // Delete the original file if it exists
-        if (originalFile.exists()) {
-            if (!originalFile.delete()) {
-                System.err.println("Failed to delete the original file: " + originalFileName);
-                return;
+        // Retrieve generated ID and set it in the player object
+        ResultSet generatedKeys = pstmt.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            player.setPlayerId(generatedKeys.getInt(1));
+            System.out.println("Player saved with generated ID: " + player.getPlayerId());
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+    // Load Player by Name
+    public static Player loadPlayerByName(String playerName) {
+        String selectPlayerSQL = "SELECT * FROM vrishab.players WHERE name = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectPlayerSQL)) {
+
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int playerId = rs.getInt("id");
+                Player player = new Player(playerId, playerName);
+
+                // Load the pets for this player
+                LinkedList<Pet> pets = PetSave.loadPetsByOwner(playerId);
+                for (Pet pet : pets) {
+                    player.addPet(pet);
+                }
+
+                System.out.println("Player loaded from database.");
+                return player;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        // Rename the temporary file to the original file's name
-        if (!tempFile.renameTo(originalFile)) {
-            System.err.println("Failed to rename the temporary file: " + tempFileName);
-        }
-
-        // Clean up the temporary file if it still exists
-        if (tempFile.exists()) {
-            if (!tempFile.delete()) {
-                System.err.println("Failed to delete the temporary file: " + tempFileName);
-            }
-        }
+        return null;
     }
 
-    /**
-     * Loads all players and their pets from the file. This method reads the 
-     * data from the file, reconstructs the player and pet objects, and adds 
-     * them to a list of players.
-     * 
-     * @return A list of players loaded from the file.
-     */
-    public static LinkedList<Player> loadPlayers() {
+    // Load All Players
+    public static LinkedList<Player> loadAllPlayers() {
         LinkedList<Player> players = new LinkedList<>();
-        File file = new File(FILE_NAME);
+        String selectAllPlayersSQL = "SELECT * FROM vrishab.players";
 
-        if (!file.exists()) {
-            // Return an empty list if the file doesn't exist
-            return players;
-        }
-        LinkedList<Pet> allPets = PetSave.loadPets(); // Load all pets from the pet save file
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectAllPlayersSQL);
+             ResultSet rs = pstmt.executeQuery()) {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
-            String line;
-            Player currentPlayer = null;
+            while (rs.next()) {
+                int playerId = rs.getInt("id");
+                String playerName = rs.getString("name");
+                Player player = new Player(playerId, playerName);
 
-            while ((line = reader.readLine()) != null) {
-                if (line.equals("---")) {
-                    currentPlayer = null; // End of the current player's data block
-                } else if (currentPlayer == null) {
-                    currentPlayer = new Player(line); // Create a new player object
-                    players.add(currentPlayer);
-                } else {
-                    String[] petData = line.split(",");
-                    if (petData.length == 3) { // Expecting name, owner, and type
-                        String name = petData[0];
-                        String owner = petData[1];
-                        String petType = petData[2];
-                        Pet pet = PetSave.findPet(allPets, name);
-                        if (pet != null) {
-                            currentPlayer.addPet(pet); // Use the full pet object
-                        }
-                    }
+                // Load pets for each player
+                LinkedList<Pet> pets = PetSave.loadPetsByOwner(playerId);
+                for (Pet pet : pets) {
+                    player.addPet(pet);
                 }
+
+                players.add(player);
             }
-        } catch (IOException e) {
-            System.err.println("Error loading players from file: " + e.getMessage());
+            System.out.println("All players loaded from database.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return players;
     }
 
-    /**
-     * Finds a player by name in the list of players.
-     * 
-     * @param players The list of players to search.
-     * @param playerName The name of the player to find.
-     * @return The Player object if found, or null if not found.
-     */
-    public static Player findPlayer(LinkedList<Player> players, String playerName) {
-        for (Player player : players) {
-            if (player.getPlayerName().equalsIgnoreCase(playerName)) {
+    // Find Player by ID
+    public static Player findPlayerById(int playerId) {
+        String selectPlayerSQL = "SELECT * FROM vrishab.players WHERE id = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(selectPlayerSQL)) {
+
+            pstmt.setInt(1, playerId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String playerName = rs.getString("name");
+                Player player = new Player(playerId, playerName);
+
+                // Load pets for this player
+                LinkedList<Pet> pets = PetSave.loadPetsByOwner(playerId);
+                for (Pet pet : pets) {
+                    player.addPet(pet);
+                }
+
+                System.out.println("Player found in database.");
                 return player;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return null; // Return null if the player is not found
+        return null;
     }
-
 }

@@ -9,18 +9,31 @@ package virtualpet2;
  * @author vrish
  */
 
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 public class Player implements Serializable {
-    private String playerName;  // The name of the player
-    private final LinkedList<Pet> pets;  // The list of pets owned by the player
+    private int playerId;         // Unique ID for the player
+    private String playerName;    // Name of the player
+    private final LinkedList<Pet> pets;  // List of pets owned by the player
 
-    // Constructor to initialize the player with a name and an empty list of pets
-    public Player(String playerName) {
+    // Constructor to initialize the player with an ID, name, and an empty list of pets
+    public Player(int playerId, String playerName) {
+        this.playerId = playerId;
         this.playerName = playerName;
         this.pets = new LinkedList<>();
+    }
+
+    // Getter for playerId
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    // Setter for playerId
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     // Getter for playerName
@@ -31,16 +44,12 @@ public class Player implements Serializable {
     // Setter for playerName
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
-        // Update the owner name in all pets
-        for (Pet pet : pets) {
-            pet.setOwner(playerName);
-        }
     }
 
     // Method to add a pet to the player's list of pets
     public void addPet(Pet pet) {
         pets.add(pet);
-        pet.setOwner(this.playerName); // Ensure the pet's owner name is up to date
+        pet.setOwnerId(this.playerId); // Update the pet’s owner ID to match the player ID
     }
 
     // Method to get a specific pet by its name
@@ -55,10 +64,7 @@ public class Player implements Serializable {
 
     // Method to get the list of pets owned by the player
     public LinkedList<Pet> getPets() {
-        // Return a list of pets that are owned by the player
-        return pets.stream()
-                   .filter(pet -> pet.getOwner().equals(this.playerName))
-                   .collect(Collectors.toCollection(LinkedList::new));
+        return pets;
     }
 }
 
