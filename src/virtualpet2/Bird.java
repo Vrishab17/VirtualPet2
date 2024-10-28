@@ -17,8 +17,8 @@ public class Bird extends PetType {
      * @return the hunger rate for a bird, which is 8.
      */
     @Override
-    public int getHungerRate() {
-        return 3;  // Birds get hungry more slowly compared to other pets
+    public double getHungerRate() {
+        return 0.1;  // Birds get hungry more slowly compared to other pets
     }
 
     /**
@@ -28,8 +28,8 @@ public class Bird extends PetType {
      * @return the play rate for a bird, which is 2.
      */
     @Override
-    public int getPlayRate() {
-        return 2;  // Birds need less playtime, losing fun slowly
+    public double getPlayRate() {
+        return 0.06;  // Birds need less playtime, losing fun slowly
     }
 
     /**
@@ -39,7 +39,7 @@ public class Bird extends PetType {
      * @return the sleep rate for a bird, which is 9.
      */
     @Override
-    public int getSleepRate() {
-        return 9;  // Birds get tired quickly, needing frequent rest
+    public double getSleepRate() {
+        return 0.3;  // Birds get tired quickly, needing frequent rest
     }
 }

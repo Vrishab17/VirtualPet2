@@ -14,26 +14,39 @@ import java.awt.*;
 
 public class PetInfoPanel extends JPanel {
 
-    private final JLabel petInfoLabel;
+    private final JProgressBar hungerBar;
+    private final JProgressBar funBar;
+    private final JProgressBar sleepBar;
 
     public PetInfoPanel() {
-        setLayout(new BorderLayout());
-        petInfoLabel = new JLabel("No pet selected");
-        add(petInfoLabel, BorderLayout.NORTH);
+        setLayout(new GridLayout(3, 2, 5, 5)); // Set up layout with labels and progress bars
+
+        // Initialize progress bars for each stat
+        hungerBar = new JProgressBar(0, 100);
+        hungerBar.setStringPainted(true); // Show percentage text on the bar
+        funBar = new JProgressBar(0, 100);
+        funBar.setStringPainted(true);
+        sleepBar = new JProgressBar(0, 100);
+        sleepBar.setStringPainted(true);
+
+        // Add labels and progress bars to the panel
+        add(new JLabel("Hunger:"));
+        add(hungerBar);
+        add(new JLabel("Fun:"));
+        add(funBar);
+        add(new JLabel("Sleep:"));
+        add(sleepBar);
     }
 
-    // Updates the pet information display
+    // Method to update the progress bars with the current pet stats
     public void updatePetInfo(Pet pet) {
-        if (pet != null) {
-            petInfoLabel.setText("<html>" +
-                    "<b>Pet Name:</b> " + pet.getName() + "<br>" +
-                    "<b>Type:</b> " + pet.getPetType() + "<br>" +
-                    "<b>Hunger:</b> " + pet.getHunger() + "/100<br>" +
-                    "<b>Fun:</b> " + pet.getFun() + "/100<br>" +
-                    "<b>Sleep:</b> " + pet.getSleep() + "/100<br>" +
-                    "</html>");
-        } else {
-            petInfoLabel.setText("No pet selected");
-        }
+        hungerBar.setValue((int) pet.getHunger());
+        hungerBar.setString(pet.getHunger() + "%");
+
+        funBar.setValue((int) pet.getFun());
+        funBar.setString(pet.getFun() + "%");
+
+        sleepBar.setValue((int) pet.getSleep());
+        sleepBar.setString(pet.getSleep() + "%");
     }
 }

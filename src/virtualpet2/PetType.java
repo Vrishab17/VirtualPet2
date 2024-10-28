@@ -11,13 +11,13 @@ package virtualpet2;
 public abstract class PetType {
 
     // Abstract method to get the rate at which the pet gets hungry.
-    public abstract int getHungerRate();
+    public abstract double getHungerRate();
 
     // Abstract method to get the rate at which the pet's need for play increases.
-    public abstract int getPlayRate();
+    public abstract double getPlayRate();
 
     // Abstract method to get the rate at which the pet gets tired and needs sleep.
-    public abstract int getSleepRate();
+    public abstract double getSleepRate();
 
     /**
      * Converts a string representation of a pet type to its corresponding PetType object.

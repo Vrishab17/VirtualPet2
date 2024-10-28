@@ -10,8 +10,8 @@ package virtualpet2;
  */
 public class Fun {
 
-    private int funLevel; // The current level of fun the pet has
-    private final int funRate; // The rate at which the pet loses fun over time
+    private double funLevel; // The current level of fun the pet has
+    private final double funRate; // The rate at which the pet loses fun over time
     private static final int MAX_FUN = 100; // The maximum level of fun
     private static final int MIN_FUN = 0; // The minimum level of fun
 
@@ -22,7 +22,7 @@ public class Fun {
     }
 
     // Getter method for the current fun level
-    public int getFunLevel() {
+    public double getFunLevel() {
         return funLevel;
     }
 
@@ -32,13 +32,13 @@ public class Fun {
             // Decrease the fun level by the fun rate, ensuring it doesn't go below the minimum
             funLevel = Math.max(funLevel - funRate, MIN_FUN);
             // Print the updated fun level and prompt the user to play with the pet
-            System.out.println(Art.YELLOW + "\nFun level decreased. Current fun: " + funLevel + Art.RESET + "\nPress 2 to Play\n");
+            System.out.println("\nFun level decreased. Current fun: " + funLevel );
             pet.setFun(funLevel); // Update the pet's fun level
         }
 
         // If the fun level has reached the minimum, notify the user that the pet is bored
         if (funLevel == MIN_FUN) {
-            System.out.println(Art.RED + pet.getName() + " is bored!" + Art.RESET + "\nPress 2 to Play\n");
+            
         }
     }
 
@@ -46,12 +46,12 @@ public class Fun {
     public void playWithPet(Pet pet) {
         if (funLevel == MAX_FUN) {
             // If the fun level is already at its maximum, inform the user that the pet is already entertained
-            System.out.println(Art.RED + pet.getName() + " is already having a lot of fun!" + Art.RESET);
+            
         } else {
             // Increase the fun level, ensuring it doesn't exceed the maximum
             funLevel = Math.min(funLevel + 20, MAX_FUN);
             // Print the updated fun level after playing with the pet
-            System.out.println(Art.GREEN + "You played with your pet. Current fun: " + funLevel + "\n" + Art.RESET);
+            
             pet.setFun(funLevel); // Update the pet's fun level
         }
     }

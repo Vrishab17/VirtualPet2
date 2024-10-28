@@ -36,9 +36,9 @@ public static void savePet(Pet pet) throws SQLException {
             try (PreparedStatement updateStmt = conn.prepareStatement(updatePetSQL)) {
                 updateStmt.setString(1, pet.getName());
                 updateStmt.setString(2, pet.getPetType());
-                updateStmt.setInt(3, pet.getHunger());
-                updateStmt.setInt(4, pet.getFun());
-                updateStmt.setInt(5, pet.getSleep());
+                updateStmt.setInt(3, (int) pet.getHunger());
+                updateStmt.setInt(4, (int) pet.getFun());
+                updateStmt.setInt(5, (int) pet.getSleep());
                 updateStmt.setInt(6, pet.getOwnerId());
                 updateStmt.setInt(7, pet.getPetId());
                 updateStmt.executeUpdate();
@@ -50,9 +50,9 @@ public static void savePet(Pet pet) throws SQLException {
             try (PreparedStatement insertStmt = conn.prepareStatement(insertPetSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 insertStmt.setString(1, pet.getName());
                 insertStmt.setString(2, pet.getPetType());
-                insertStmt.setInt(3, pet.getHunger());
-                insertStmt.setInt(4, pet.getFun());
-                insertStmt.setInt(5, pet.getSleep());
+                insertStmt.setInt(3, (int) pet.getHunger());
+                insertStmt.setInt(4, (int) pet.getFun());
+                insertStmt.setInt(5, (int) pet.getSleep());
                 insertStmt.setInt(6, pet.getOwnerId());
 
                 insertStmt.executeUpdate();

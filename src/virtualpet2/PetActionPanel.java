@@ -8,7 +8,6 @@ package virtualpet2;
  *
  * @author vrishabchetty
  */
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,30 +41,32 @@ public class PetActionPanel extends JPanel {
     // Performs the selected action on the pet
     private void performAction(String action) {
         Pet selectedPet = mainFrame.getSelectedPet();
-
         if (selectedPet == null) {
             JOptionPane.showMessageDialog(this, "Please select a pet first.");
             return;
         }
 
         try {
+            // Get the pet type and create instances for Hunger, Fun, and Sleep
+            PetType petType = PetType.convertStringToPetType(selectedPet.getPetType());
+
             switch (action) {
                 case "feed":
-                    
-                    Hunger hunger = new Hunger(selectedPet, PetType.convertStringToPetType(selectedPet.getPetType()));
-                    hunger.feedPet(selectedPet); 
+                    // Use Hunger class to feed the pet, setting hunger to max
+                    Hunger hunger = new Hunger(selectedPet, petType);
+                    hunger.feedPet(selectedPet); // This should set hunger to 100
                     break;
 
                 case "play":
-                    
-                    Fun fun = new Fun(selectedPet, PetType.convertStringToPetType(selectedPet.getPetType()));
-                    fun.playWithPet(selectedPet); 
+                    // Use Fun class to play with the pet, setting fun to max
+                    Fun fun = new Fun(selectedPet, petType);
+                    fun.playWithPet(selectedPet); // This should set fun to 100
                     break;
 
                 case "sleep":
-                    
-                    Sleep sleep = new Sleep(selectedPet, PetType.convertStringToPetType(selectedPet.getPetType()));
-                    sleep.putPetToSleep(selectedPet); 
+                    // Use Sleep class to put the pet to sleep, setting sleep to max
+                    Sleep sleep = new Sleep(selectedPet, petType);
+                    sleep.putPetToSleep(selectedPet); // This should set sleep to 100
                     break;
 
                 default:
@@ -73,7 +74,8 @@ public class PetActionPanel extends JPanel {
                     return;
             }
 
-            PetSave.savePet(selectedPet); // Save the updated pet to the database
+            // Save the updated pet stats to the database
+            PetSave.savePet(selectedPet);
             mainFrame.refreshPetInfo(); // Refresh the pet info on the GUI
             JOptionPane.showMessageDialog(this, "Action performed: " + action);
 

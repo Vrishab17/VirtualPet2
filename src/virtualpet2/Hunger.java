@@ -4,14 +4,16 @@
  */
 package virtualpet2;
 
+
+
 /**
  *
  * @author vrishabchetty
  */
 public class Hunger {
 
-    private int hungerLevel;  // The current hunger level of the pet
-    private final int hungerRate;  // The rate at which the pet gets hungry
+    private double hungerLevel;  // The current hunger level of the pet
+    private final double hungerRate;  // The rate at which the pet gets hungry
     private static final int MAX_HUNGER = 100;  // Maximum hunger level
     private static final int MIN_HUNGER = 0;  // Minimum hunger level
 
@@ -33,7 +35,7 @@ public class Hunger {
      *
      * @return The current hunger level
      */
-    public int getHungerLevel() {
+    public double getHungerLevel() {
         return hungerLevel;  // Return the current hunger level
     }
 
@@ -47,12 +49,12 @@ public class Hunger {
     public void decreaseHunger(Pet pet) {
         if (hungerLevel > MIN_HUNGER) {  // Check if the hunger level is above the minimum
             hungerLevel = Math.max(hungerLevel - hungerRate, MIN_HUNGER);  // Decrease hunger but not below MIN_HUNGER
-            System.out.println(Art.YELLOW + "\nHunger level decreased. Current hunger: " + hungerLevel + Art.RESET + "\nPress 1 to Feed\n");
+            System.out.println("\nHunger level decreased. Current hunger: " + hungerLevel);
             pet.setHunger(hungerLevel);  // Update the pet's hunger level
         }
 
         if (hungerLevel == MIN_HUNGER) {  // Check if the pet is now starving
-            System.out.println(Art.RED + pet.getName() + " is starving!" + Art.RESET + "\nPress 1 to Feed\n");
+            
         }
     }
 
@@ -64,10 +66,10 @@ public class Hunger {
      */
     public void feedPet(Pet pet) {
         if (hungerLevel == MAX_HUNGER) {  // Check if the pet is already full
-            System.out.println(Art.RED + pet.getName() + " Is Full!" + Art.RESET);
+            
         } else {
             hungerLevel = Math.min(hungerLevel + 20, MAX_HUNGER);  // Increase hunger but not above MAX_HUNGER
-            System.out.println(Art.GREEN + "Pet has been fed. Current hunger: " + hungerLevel + "\n" + Art.RESET);
+            System.out.println("Pet has been fed. Current hunger: " + hungerLevel);
             pet.setHunger(hungerLevel);  // Update the pet's hunger level
         }
     }

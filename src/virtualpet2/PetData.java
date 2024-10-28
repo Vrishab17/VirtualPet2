@@ -14,11 +14,11 @@ public class PetData implements Serializable {
     // Instance variables to hold the pet's data
     private int petId;      // Unique ID of the pet
     private String name;     // The name of the pet
-    private int hunger;      // The hunger level of the pet
+    private double hunger;      // The hunger level of the pet
     private int age;         // The age of the pet
-    private int fun;         // The fun level of the pet
+    private double fun;         // The fun level of the pet
     private String petType;  // The type of the pet (e.g., Cat, Dog, Bird)
-    private int sleep;       // The sleep level of the pet
+    private double sleep;       // The sleep level of the pet
     private int ownerId;     // ID of the pet's owner
 
     /**
@@ -33,7 +33,7 @@ public class PetData implements Serializable {
      * @param petType The type of the pet (e.g., Cat, Dog, Bird)
      * @param ownerId The ID of the pet's owner
      */
-    public PetData(int petId, String name, int hunger, int age, int fun, int sleep, String petType, int ownerId) {
+    public PetData(int petId, String name, double hunger, int age, double fun, double sleep, String petType, int ownerId) {
         this.petId = petId;
         this.name = name;
         this.hunger = hunger;
@@ -61,11 +61,11 @@ public class PetData implements Serializable {
         this.name = name;
     }
 
-    public int getHunger() {
+    public double getHunger() {
         return hunger;
     }
 
-    public void setHunger(int hunger) {
+    public void setHunger(double hunger) {
         this.hunger = hunger;
     }
 
@@ -77,19 +77,19 @@ public class PetData implements Serializable {
         this.age = age;
     }
 
-    public int getFun() {
+    public double getFun() {
         return fun;
     }
 
-    public void setFun(int fun) {
+    public void setFun(double fun) {
         this.fun = fun;
     }
 
-    public int getSleep() {
+    public double getSleep() {
         return sleep;
     }
 
-    public void setSleep(int sleep) {
+    public void setSleep(double sleep) {
         this.sleep = sleep;
     }
 

@@ -4,6 +4,7 @@
  */
 package virtualpet2;
 
+
 /**
  *
  * @author vrishabchetty
@@ -11,10 +12,10 @@ package virtualpet2;
 public class Sleep {
 
     // Tracks the current sleep level of the pet (from 0 to 100).
-    private int sleepLevel;
+    private double sleepLevel;
     
     // The rate at which the pet gets tired over time (based on pet type).
-    private final int sleepRate; 
+    private final double sleepRate; 
     
     // Constant for the maximum sleep level the pet can have.
     private static final int MAX_SLEEP = 100;
@@ -39,7 +40,7 @@ public class Sleep {
      * 
      * @return The current sleep level (an integer between 0 and 100).
      */
-    public int getSleepLevel() {
+    public double getSleepLevel() {
         return sleepLevel;
     }
 
@@ -52,18 +53,12 @@ public class Sleep {
             sleepLevel = Math.max(sleepLevel - sleepRate, MIN_SLEEP); // Decrease sleep level.
             
             // Inform the player that the sleep level has decreased.
-            System.out.println(Art.YELLOW + "\nSleep level decreased. Current sleep: " 
-                               + sleepLevel + Art.RESET + "\nPress 3 to Sleep\n");
+            System.out.println("\nSleep level decreased. Current sleep: "+ sleepLevel);
             
             // Update the pet's sleep level.
             pet.setSleep(sleepLevel);
         }
 
-        // Notify the player if the pet is fully tired (reached MIN_SLEEP).
-        if (sleepLevel == MIN_SLEEP) {
-            System.out.println(Art.RED + pet.getName() + " is very tired!" 
-                               + Art.RESET + "\nPress 3 to Sleep\n");
-        }
     }
 
     /**
@@ -73,12 +68,10 @@ public class Sleep {
     public void putPetToSleep(Pet pet) {
         // If the pet is already fully rested, inform the player.
         if (sleepLevel == MAX_SLEEP) {
-            System.out.println(Art.RED + pet.getName() + " is fully rested!" + Art.RESET);
         } else {
             // Increase the sleep level when the pet rests, ensuring it doesn't exceed MAX_SLEEP.
             sleepLevel = Math.min(sleepLevel + 20, MAX_SLEEP);
-            System.out.println(Art.GREEN + "Your pet has rested. Current sleep: " 
-                               + sleepLevel + "\n" + Art.RESET);
+            System.out.println("Your pet has rested. Current sleep: " + sleepLevel);
             
             // Update the pet's sleep level.
             pet.setSleep(sleepLevel);

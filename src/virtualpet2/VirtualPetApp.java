@@ -11,13 +11,14 @@ import java.sql.SQLException;
  *
  * @author vrishabchetty
  */
-
-
 public class VirtualPetApp {
 
     public static void main(String[] args) {
+        
         try {
             Database.connect();
+            Database.createPlayerTable();
+            Database.createPetTable();
 
             // Get or create player
             Player player = initializePlayer();
@@ -28,6 +29,7 @@ public class VirtualPetApp {
             JOptionPane.showMessageDialog(null, "Failed to connect to the database: " + e.getMessage());
         }
     }
+    
 
     private static Player initializePlayer() throws SQLException {
         // Ask for player's name
@@ -51,5 +53,3 @@ public class VirtualPetApp {
         return player;
     }
 }
-
-

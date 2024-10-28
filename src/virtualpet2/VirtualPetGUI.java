@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-
 public class VirtualPetGUI extends JFrame {
 
     private final Player player;
@@ -43,6 +42,62 @@ public class VirtualPetGUI extends JFrame {
 
         // Start the stat decay timer if a pet is selected
         startStatDecay();
+        checkAndPromptForPet();
+    }
+
+    // Method to check if the player has pets and prompt to create or play with a pet
+    private void checkAndPromptForPet() {
+        if (player.getPets().isEmpty()) {
+            int option = JOptionPane.showOptionDialog(this,
+                    "You have no pets. Would you like to create a new pet?",
+                    "No Pets Found",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Create New Pet", "Exit"},
+                    "Create New Pet");
+
+            if (option == JOptionPane.YES_OPTION) {
+                createNewPet();
+            } else {
+                System.exit(0); // Exit if the user doesn't want to create a new pet
+            }
+        } else {
+            int option = JOptionPane.showOptionDialog(this,
+                    "Would you like to create a new pet or play with an existing one?",
+                    "Select Action",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Create New Pet", "Play with Existing Pet"},
+                    "Play with Existing Pet");
+
+            if (option == JOptionPane.YES_OPTION) {
+                createNewPet();
+            }
+        }
+    }
+
+    // Method to create a new pet and add it to the player's list
+    private void createNewPet() {
+        String petName = JOptionPane.showInputDialog(this, "Enter a name for your new pet:");
+        if (petName != null && !petName.trim().isEmpty()) {
+            String[] petTypes = {"Cat", "Dog", "Bird"};
+            String petType = (String) JOptionPane.showInputDialog(this, "Select pet type:",
+                    "Pet Type", JOptionPane.QUESTION_MESSAGE, null, petTypes, petTypes[0]);
+
+            if (petType != null) {
+                try {
+                    Pet newPet = new Pet(0, petName.trim(), 100, 0, 100, 100, petType, player.getPlayerId());
+                    player.addPet(newPet); // Add to player's list
+                    PetSave.savePet(newPet); // Save the new pet to the database
+                    petSelectionPanel.loadPetList(player); // Reload the pet list
+                    selectPet(petName); // Automatically select the new pet
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, "Error creating pet: " + e.getMessage());
+                }
+            }
+        }
     }
 
     // Selects a pet and updates the information panel
@@ -54,7 +109,7 @@ public class VirtualPetGUI extends JFrame {
     // Starts the stat decay timer to decrease hunger, fun, and sleep
     private void startStatDecay() {
         // Set up a Swing Timer to decay stats every 30 seconds
-        statDecayTimer = new Timer(30000, new ActionListener() {
+        statDecayTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (selectedPet != null) {
