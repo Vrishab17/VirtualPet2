@@ -38,15 +38,29 @@ public class PetInfoPanel extends JPanel {
         add(sleepBar);
     }
 
-    // Method to update the progress bars with the current pet stats
-    public void updatePetInfo(Pet pet) {
-        hungerBar.setValue((int) pet.getHunger());
-        hungerBar.setString(pet.getHunger() + "%");
-
-        funBar.setValue((int) pet.getFun());
-        funBar.setString(pet.getFun() + "%");
-
-        sleepBar.setValue((int) pet.getSleep());
-        sleepBar.setString(pet.getSleep() + "%");
+//    // Method to update the progress bars with the current pet stats
+//    public void updatePetInfo(Pet pet) {
+//        hungerBar.setValue((int) pet.getHunger());
+//        hungerBar.setString(pet.getHunger() + "%");
+//
+//        funBar.setValue((int) pet.getFun());
+//        funBar.setString(pet.getFun() + "%");
+//
+//        sleepBar.setValue((int) pet.getSleep());
+//        sleepBar.setString(pet.getSleep() + "%");
+//    }
+    
+        public void updatePetInfo(Pet pet) {
+        if (pet != null) {
+            hungerBar.setValue((int) pet.getHunger());
+            funBar.setValue((int) pet.getFun());
+            sleepBar.setValue((int) pet.getSleep());
+        }
+    }
+    
+        public void clearInfo() {
+        hungerBar.setValue(0);
+        funBar.setValue(0);
+        sleepBar.setValue(0);
     }
 }

@@ -18,7 +18,7 @@ public class Cat extends PetType {
      */
     @Override
     public double getHungerRate() {
-        return 0.1;  // Cats get hungry at a slower rate compared to dogs
+        return 0.05;  // Cats get hungry at a slower rate compared to dogs
     }
 
     /**
@@ -29,7 +29,7 @@ public class Cat extends PetType {
      */
     @Override
     public double getPlayRate() {
-        return 0.16;  // Cats lose fun at a moderate rate, balancing between play and relaxation
+        return 0.08;  // Cats lose fun at a moderate rate, balancing between play and relaxation
     }
 
     /**
@@ -40,6 +40,6 @@ public class Cat extends PetType {
      */
     @Override
     public double getSleepRate() {
-        return 0.3;  // Cats get tired more quickly, needing frequent naps
+        return 0.15;  // Cats get tired more quickly, needing frequent naps
     }
 }

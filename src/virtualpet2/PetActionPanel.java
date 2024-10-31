@@ -54,19 +54,19 @@ public class PetActionPanel extends JPanel {
                 case "feed":
                     // Use Hunger class to feed the pet, setting hunger to max
                     Hunger hunger = new Hunger(selectedPet, petType);
-                    hunger.feedPet(selectedPet); // This should set hunger to 100
+                    hunger.feedPet(selectedPet); 
                     break;
 
                 case "play":
                     // Use Fun class to play with the pet, setting fun to max
                     Fun fun = new Fun(selectedPet, petType);
-                    fun.playWithPet(selectedPet); // This should set fun to 100
+                    fun.playWithPet(selectedPet); 
                     break;
 
                 case "sleep":
                     // Use Sleep class to put the pet to sleep, setting sleep to max
                     Sleep sleep = new Sleep(selectedPet, petType);
-                    sleep.putPetToSleep(selectedPet); // This should set sleep to 100
+                    sleep.putPetToSleep(selectedPet);
                     break;
 
                 default:

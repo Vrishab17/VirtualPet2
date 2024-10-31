@@ -18,7 +18,7 @@ public class Dog extends PetType {
      */
     @Override
     public double getHungerRate() {
-        return 0.16; // Dogs get hungry at a moderate rate
+        return 0.08; // Dogs get hungry at a moderate rate
     }
 
     /**
@@ -29,7 +29,7 @@ public class Dog extends PetType {
      */
     @Override
     public double getPlayRate() {
-        return 0.26; // Dogs lose fun relatively quickly, needing more playtime
+        return 0.13; // Dogs lose fun relatively quickly, needing more playtime
     }
 
     /**
@@ -40,6 +40,6 @@ public class Dog extends PetType {
      */
     @Override
     public double getSleepRate() {
-        return 0.1; // Dogs have a slower rate of getting tired compared to hunger and play rates
+        return 0.05; // Dogs have a slower rate of getting tired compared to hunger and play rates
     }
 }

@@ -26,12 +26,14 @@ public class VirtualPetGUI extends JFrame {
 
     public VirtualPetGUI(Player player) {
         this.player = player;
-        setTitle("Virtual Pet Simulator");
+        this.selectedPet = null; // No pet selected yet
+
+        setTitle("Virtual Pet Simulator - Select or Create Pet");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        petSelectionPanel = new PetSelectionPanel(player, this);
+        petSelectionPanel = new PetSelectionPanel(player, this); // Initialize pet selection panel
         petInfoPanel = new PetInfoPanel();
         petActionPanel = new PetActionPanel(this);
 
@@ -40,10 +42,37 @@ public class VirtualPetGUI extends JFrame {
         add(petInfoPanel, BorderLayout.CENTER);
         add(petActionPanel, BorderLayout.SOUTH);
 
-        // Start the stat decay timer if a pet is selected
-        startStatDecay();
+        // Hide pet info and action panels until a pet is selected
+        petInfoPanel.setVisible(false);
+        petActionPanel.setVisible(false);
+
         checkAndPromptForPet();
     }
+
+    // Constructor that accepts both player and selectedPet
+    public VirtualPetGUI(Player player, Pet selectedPet) {
+        this.player = player;
+        this.selectedPet = selectedPet;
+        
+        // Initialize only the necessary panels for direct pet interaction
+        petSelectionPanel = null; // Explicitly set to null as it's not used in this constructor
+        petInfoPanel = new PetInfoPanel();
+        petActionPanel = new PetActionPanel(this);
+
+        setTitle("Virtual Pet Simulator - Playing with " + selectedPet.getName());
+        setSize(500, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        setLayout(new BorderLayout());
+        add(petInfoPanel, BorderLayout.CENTER);
+        add(petActionPanel, BorderLayout.SOUTH);
+
+        // Load the selected pet's information and start the stat decay
+        petInfoPanel.updatePetInfo(selectedPet);
+        startStatDecay();
+    }
+
 
     // Method to check if the player has pets and prompt to create or play with a pet
     private void checkAndPromptForPet() {
@@ -78,38 +107,57 @@ public class VirtualPetGUI extends JFrame {
         }
     }
 
-    // Method to create a new pet and add it to the player's list
-    private void createNewPet() {
-        String petName = JOptionPane.showInputDialog(this, "Enter a name for your new pet:");
-        if (petName != null && !petName.trim().isEmpty()) {
-            String[] petTypes = {"Cat", "Dog", "Bird"};
-            String petType = (String) JOptionPane.showInputDialog(this, "Select pet type:",
-                    "Pet Type", JOptionPane.QUESTION_MESSAGE, null, petTypes, petTypes[0]);
+// Method to create a new pet and add it to the player's list
+private void createNewPet() {
+    String petName = JOptionPane.showInputDialog(this, "Enter a name for your new pet:");
+    if (petName != null && !petName.trim().isEmpty()) {
+        String[] petTypes = {"Cat", "Dog", "Bird"};
+        String petType = (String) JOptionPane.showInputDialog(this, "Select pet type:",
+                "Pet Type", JOptionPane.QUESTION_MESSAGE, null, petTypes, petTypes[0]);
 
-            if (petType != null) {
-                try {
-                    Pet newPet = new Pet(0, petName.trim(), 100, 0, 100, 100, petType, player.getPlayerId());
-                    player.addPet(newPet); // Add to player's list
-                    PetSave.savePet(newPet); // Save the new pet to the database
-                    petSelectionPanel.loadPetList(player); // Reload the pet list
-                    selectPet(petName); // Automatically select the new pet
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "Error creating pet: " + e.getMessage());
-                }
+        if (petType != null) {
+            try {
+                // Create a new pet and assign it default values
+                Pet newPet = new Pet(0, petName.trim(), 100, 0, 100, 100, petType, player.getPlayerId());
+                player.addPet(newPet); // Add to player's list
+                PetSave.savePet(newPet); // Save the new pet to the database
+
+                // Refresh the pet list without selecting any pet
+                petSelectionPanel.loadPetList(player); // Reload the pet list in the dropdown
+
+                // Set selectedPet to null to ensure no pet is selected by default
+                selectedPet = null;
+                petInfoPanel.clearInfo(); // Clear displayed pet info
+
+                // Inform the user that the pet has been created successfully
+                JOptionPane.showMessageDialog(this, "New pet created successfully. Please select it from the dropdown.");
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error creating pet: " + e.getMessage());
             }
         }
     }
+}
+
+
+
 
     // Selects a pet and updates the information panel
-    public void selectPet(String petName) {
-        selectedPet = player.getPet(petName);
+public void selectPet(String petName) {
+    selectedPet = player.getPet(petName);
+    if (selectedPet != null) {
         petInfoPanel.updatePetInfo(selectedPet);
+    } else {
+        petInfoPanel.clearInfo(); // Clear info if no valid pet is selected
     }
+}
+
+
 
     // Starts the stat decay timer to decrease hunger, fun, and sleep
     private void startStatDecay() {
         // Set up a Swing Timer to decay stats every 30 seconds
-        statDecayTimer = new Timer(1000, new ActionListener() {
+        statDecayTimer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (selectedPet != null) {
@@ -152,7 +200,11 @@ public class VirtualPetGUI extends JFrame {
         return selectedPet;
     }
 
-    public void refreshPetInfo() {
+public void refreshPetInfo() {
+    if (selectedPet != null) {
         petInfoPanel.updatePetInfo(selectedPet);
+    } else {
+        petInfoPanel.clearInfo();
     }
+}
 }

@@ -14,8 +14,8 @@ import java.sql.SQLException;
 public class VirtualPetApp {
 
     public static void main(String[] args) {
-        
         try {
+            // Connect to the database
             Database.connect();
             Database.createPlayerTable();
             Database.createPetTable();
@@ -23,13 +23,13 @@ public class VirtualPetApp {
             // Get or create player
             Player player = initializePlayer();
 
-            // Run the main GUI in the Swing event dispatch thread
-            SwingUtilities.invokeLater(() -> new VirtualPetGUI(player).setVisible(true));
+            // Open the pet selection frame for the specified player
+            SwingUtilities.invokeLater(() -> new PetSelectionFrame(player).setVisible(true));
+            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Failed to connect to the database: " + e.getMessage());
         }
     }
-    
 
     private static Player initializePlayer() throws SQLException {
         // Ask for player's name
