@@ -27,7 +27,7 @@ public class PetSelectionFrame extends JFrame {
         this.player = player;
 
         setTitle("Select Pet for " + player.getPlayerName());
-        setSize(300, 200);
+        setPreferredSize(new Dimension(200, 200));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -52,8 +52,8 @@ public class PetSelectionFrame extends JFrame {
 
         // Button to select an existing pet
         selectPetButton = new JButton("Play with Selected Pet");
-        selectPetButton.setBackground(Color.GREEN);
-        selectPetButton.setForeground(Color.BLACK);
+        selectPetButton.setBackground(new Color(50,147,111));
+        selectPetButton.setForeground(Color.WHITE);
         selectPetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         selectPetButton.addActionListener((ActionEvent e) -> {
             String selectedPetName = (String) petDropdown.getSelectedItem();
@@ -68,7 +68,7 @@ public class PetSelectionFrame extends JFrame {
 
         // Button to create a new pet
         createPetButton = new JButton("Create New Pet");
-        createPetButton.setBackground(Color.BLUE);
+        createPetButton.setBackground(new Color(34,116,165));
         createPetButton.setForeground(Color.WHITE);
         createPetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         createPetButton.addActionListener((ActionEvent e) -> createNewPet());
@@ -79,6 +79,7 @@ public class PetSelectionFrame extends JFrame {
 
         // Add main panel to frame
         add(mainPanel);
+        pack();
     }
 
     // Load pets from player's list into the dropdown

@@ -15,6 +15,7 @@ import virtualpet2.PetTypes.PetType;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import java.sql.SQLException;
 import virtualpet2.Pet.Pet;
 import virtualpet2.Pet.PetSave;
@@ -26,61 +27,33 @@ public class VirtualPetGUI extends JFrame {
     private final Player player;
     private Pet selectedPet;
 
-    private final PetSelectionPanel petSelectionPanel;
     private final PetInfoPanel petInfoPanel;
     private final PetActionPanel petActionPanel;
     private JPanel controlPanel;
-    private Timer statDecayTimer; // Timer to manage stat decay
+    private JPanel imagePanel;
+    private Timer statDecayTimer;
 
-    public VirtualPetGUI(Player player) {
-        this.player = player;
-        this.selectedPet = null;
-
-        setTitle("Virtual Pet Simulator - Select or Create Pet");
-        setSize(500, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
-        initControlPanel();
-
-        petSelectionPanel = new PetSelectionPanel(player, this);
-        petInfoPanel = new PetInfoPanel();
-        petActionPanel = new PetActionPanel(this);
-
-        setLayout(new BorderLayout());
-        add(controlPanel, BorderLayout.NORTH);
-        add(petSelectionPanel, BorderLayout.WEST);
-        add(petInfoPanel, BorderLayout.CENTER);
-        add(petActionPanel, BorderLayout.SOUTH);
-
-        petInfoPanel.setVisible(false);
-        petActionPanel.setVisible(false);
-
-    }
-
-    // Constructor that accepts both player and selectedPet
     public VirtualPetGUI(Player player, Pet selectedPet) {
         this.player = player;
         this.selectedPet = selectedPet;
 
         initControlPanel(); // Initialize the control panel with Logout and Exit buttons
-
-        // Initialize only the necessary panels for direct pet interaction
-        petSelectionPanel = null; // Explicitly set to null as it's not used in this constructor
+        initImagePanel(); // Initialize the image panel with pet image
         petInfoPanel = new PetInfoPanel();
         petActionPanel = new PetActionPanel(this);
 
         setTitle("Virtual Pet Simulator - Playing with " + selectedPet.getName());
-        setSize(500, 400);
+        setPreferredSize(new Dimension(550, 300));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         setLayout(new BorderLayout());
-        add(controlPanel, BorderLayout.NORTH); // Add the control panel at the top
-        add(petInfoPanel, BorderLayout.CENTER);
+        add(controlPanel, BorderLayout.NORTH);
+        add(imagePanel, BorderLayout.WEST);
+        add(petInfoPanel, BorderLayout.EAST);
         add(petActionPanel, BorderLayout.SOUTH);
+        pack();
 
-        // Load the selected pet's information and start the stat decay
         petInfoPanel.updatePetInfo(selectedPet);
         startStatDecay();
     }
@@ -96,17 +69,46 @@ public class VirtualPetGUI extends JFrame {
 
         controlPanel.add(logoutButton);
         controlPanel.add(exitButton);
+    }
 
+    private void initImagePanel() {
+        imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        imagePanel.setLayout(new BoxLayout(imagePanel, BoxLayout.Y_AXIS)); // Set vertical layout for image and info
+
+        JLabel petImageLabel = new JLabel();
+        String petType = selectedPet.getPetType();
+        URL imageUrl = null;
+
+        // Load image based on pet type
+        switch (petType.toLowerCase()) {
+            case "dog":
+                imageUrl = VirtualPetGUI.class.getResource("dog.png");
+                break;
+            case "cat":
+                imageUrl = VirtualPetGUI.class.getResource("cat.png");
+                break;
+            case "bird":
+                imageUrl = VirtualPetGUI.class.getResource("bird.png");
+                break;
+            default:
+                imageUrl = VirtualPetGUI.class.getResource("default.jpg");
+                break;
+        }
+
+        if (imageUrl != null) {
+            ImageIcon petIcon = new ImageIcon(imageUrl);
+            Image scaledImage = petIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            petImageLabel.setIcon(new ImageIcon(scaledImage)); // Set the image icon if it is loaded correctly
+        } else {
+            petImageLabel.setText("Image not found"); // Display text if the image is not found
+        }
+        imagePanel.add(petImageLabel);
     }
 
     private void logout() {
         dispose();  // Close the current window
         SwingUtilities.invokeLater(() -> VirtualPetApp.main(new String[]{}));  // Restart the app for a new user
     }
-
-
-
-
 
     // Selects a pet and updates the information panel
     public void selectPet(String petName) {
