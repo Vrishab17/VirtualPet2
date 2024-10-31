@@ -108,32 +108,5 @@ public static void createPetTable() {
             System.out.println("Connection is null. Cannot create player table.");
         }
     }
-
-    public static void dropAllTables() {
-        if (connection != null) {
-            try (Statement stmt = connection.createStatement()) {
-                // Drop the PETS table first, as it has a foreign key dependency on PLAYERS
-                try {
-                    stmt.executeUpdate("DROP TABLE vrishab.pets");
-                    System.out.println("PETS table dropped.");
-                } catch (SQLException e) {
-                    System.out.println("PETS table does not exist or cannot be dropped.");
-                }
-
-                // Drop the PLAYERS table
-                try {
-                    stmt.executeUpdate("DROP TABLE vrishab.players");
-                    System.out.println("PLAYERS table dropped.");
-                } catch (SQLException e) {
-                    System.out.println("PLAYERS table does not exist or cannot be dropped.");
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                System.out.println("Failed to drop tables.");
-            }
-        } else {
-            System.out.println("Connection is null. Cannot drop tables.");
-        }
-    }
+    
 }

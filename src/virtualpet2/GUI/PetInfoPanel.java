@@ -38,18 +38,6 @@ public class PetInfoPanel extends JPanel {
         add(new JLabel("Sleep:"));
         add(sleepBar);
     }
-
-//    // Method to update the progress bars with the current pet stats
-//    public void updatePetInfo(Pet pet) {
-//        hungerBar.setValue((int) pet.getHunger());
-//        hungerBar.setString(pet.getHunger() + "%");
-//
-//        funBar.setValue((int) pet.getFun());
-//        funBar.setString(pet.getFun() + "%");
-//
-//        sleepBar.setValue((int) pet.getSleep());
-//        sleepBar.setString(pet.getSleep() + "%");
-//    }
     
         public void updatePetInfo(Pet pet) {
         if (pet != null) {

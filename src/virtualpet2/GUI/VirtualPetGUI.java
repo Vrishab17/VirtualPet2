@@ -8,18 +8,12 @@ package virtualpet2.GUI;
  *
  * @author vrishabchetty
  */
-import virtualpet2.Actions.Fun;
-import virtualpet2.Actions.Sleep;
-import virtualpet2.Actions.Hunger;
-import virtualpet2.PetTypes.PetType;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.net.URL;
-import java.sql.SQLException;
 import virtualpet2.Pet.Pet;
-import virtualpet2.Pet.PetSave;
 import virtualpet2.Player.Player;
+import virtualpet2.StatDecayTimer;
 import virtualpet2.VirtualPetApp;
 
 public class VirtualPetGUI extends JFrame {
@@ -31,7 +25,7 @@ public class VirtualPetGUI extends JFrame {
     private final PetActionPanel petActionPanel;
     private JPanel controlPanel;
     private JPanel imagePanel;
-    private Timer statDecayTimer;
+    private StatDecayTimer statDecayTimer; // Use StatDecayTimer instead of Timer
 
     public VirtualPetGUI(Player player, Pet selectedPet) {
         this.player = player;
@@ -55,7 +49,9 @@ public class VirtualPetGUI extends JFrame {
         pack();
 
         petInfoPanel.updatePetInfo(selectedPet);
-        startStatDecay();
+
+        // Initialize StatDecayTimer with selectedPet and petInfoPanel
+        statDecayTimer = new StatDecayTimer(selectedPet, petInfoPanel);
     }
 
     private void initControlPanel() {
@@ -109,48 +105,8 @@ public class VirtualPetGUI extends JFrame {
         dispose();  // Close the current window
         SwingUtilities.invokeLater(() -> VirtualPetApp.main(new String[]{}));  // Restart the app for a new user
     }
-
-    // Selects a pet and updates the information panel
-    public void selectPet(String petName) {
-        selectedPet = player.getPet(petName);
-        if (selectedPet != null) {
-            petInfoPanel.updatePetInfo(selectedPet);
-        } else {
-            petInfoPanel.clearInfo(); // Clear info if no valid pet is selected
-        }
-    }
-
-    // Starts the stat decay timer to decrease hunger, fun, and sleep
-    private void startStatDecay() {
-        // Set up a Swing Timer to decay stats every 30 seconds
-        statDecayTimer = new Timer(500, (ActionEvent e) -> {
-            if (selectedPet != null) {
-                decayStats(selectedPet);
-                petInfoPanel.updatePetInfo(selectedPet); // Update GUI to reflect new stats
-            }
-        });
-        statDecayTimer.start();
-    }
-
-    // Decays the stats of the pet and saves updates to the database
-    private void decayStats(Pet pet) {
-        // Decrease hunger, fun, and sleep by a small amount
-        Hunger hunger = new Hunger(pet, PetType.convertStringToPetType(pet.getPetType()));
-        Fun fun = new Fun(pet, PetType.convertStringToPetType(pet.getPetType()));
-        Sleep sleep = new Sleep(pet, PetType.convertStringToPetType(pet.getPetType()));
-
-        hunger.decreaseHunger(pet);
-        fun.decreaseFun(pet);
-        sleep.decreaseSleep(pet);
-
-        try {
-            PetSave.savePet(pet); // Save updated stats to the database
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error updating pet stats: " + ex.getMessage());
-        }
-    }
-
-    // Stop the timer when the window is closed
+    
+    
     @Override
     public void dispose() {
         if (statDecayTimer != null) {
