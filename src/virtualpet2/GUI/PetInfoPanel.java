@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package virtualpet2;
+package virtualpet2.GUI;
 
 /**
  *
@@ -11,6 +11,7 @@ package virtualpet2;
 
 import javax.swing.*;
 import java.awt.*;
+import virtualpet2.Pet.Pet;
 
 public class PetInfoPanel extends JPanel {
 
@@ -23,7 +24,7 @@ public class PetInfoPanel extends JPanel {
 
         // Initialize progress bars for each stat
         hungerBar = new JProgressBar(0, 100);
-        hungerBar.setStringPainted(true); // Show percentage text on the bar
+        hungerBar.setStringPainted(true);
         funBar = new JProgressBar(0, 100);
         funBar.setStringPainted(true);
         sleepBar = new JProgressBar(0, 100);

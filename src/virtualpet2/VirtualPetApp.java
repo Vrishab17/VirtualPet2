@@ -4,6 +4,9 @@
  */
 package virtualpet2;
 
+import virtualpet2.Player.Player;
+import virtualpet2.Player.PlayerSave;
+import virtualpet2.GUI.PetSelectionFrame;
 import javax.swing.*;
 import java.sql.SQLException;
 

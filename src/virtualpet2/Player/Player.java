@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package virtualpet2;
+package virtualpet2.Player;
 
 /**
  *
@@ -10,9 +10,9 @@ package virtualpet2;
  */
 
 
+import virtualpet2.Pet.Pet;
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 public class Player implements Serializable {
     private int playerId;         // Unique ID for the player

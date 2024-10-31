@@ -1,4 +1,4 @@
-package virtualpet2;
+package virtualpet2.Player;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -8,11 +8,14 @@ package virtualpet2;
  *
  * @author vrish
  */
+import virtualpet2.Pet.PetSave;
+import virtualpet2.Pet.Pet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import virtualpet2.Database;
 
 public class PlayerSave {
 
@@ -37,7 +40,6 @@ public class PlayerSave {
         }
 
     } catch (SQLException e) {
-        e.printStackTrace();
     }
 }
 
@@ -64,7 +66,6 @@ public class PlayerSave {
                 return player;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -94,7 +95,6 @@ public class PlayerSave {
             System.out.println("All players loaded from database.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         return players;
@@ -123,7 +123,6 @@ public class PlayerSave {
                 return player;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }

@@ -2,16 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package virtualpet2;
+package virtualpet2.GUI;
 
 /**
  *
  * @author vrishabchetty
  */
+import virtualpet2.Actions.Fun;
+import virtualpet2.Actions.Sleep;
+import virtualpet2.Actions.Hunger;
+import virtualpet2.PetTypes.PetType;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import virtualpet2.Pet.Pet;
+import virtualpet2.Pet.PetSave;
 
 public class PetActionPanel extends JPanel {
 
@@ -77,7 +81,6 @@ public class PetActionPanel extends JPanel {
             // Save the updated pet stats to the database
             PetSave.savePet(selectedPet);
             mainFrame.refreshPetInfo(); // Refresh the pet info on the GUI
-            JOptionPane.showMessageDialog(this, "Action performed: " + action);
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error updating pet in database: " + e.getMessage());

@@ -2,7 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package virtualpet2;
+package virtualpet2.Actions;
+
+import virtualpet2.Pet.Pet;
+import virtualpet2.PetTypes.PetType;
 
 /**
  *

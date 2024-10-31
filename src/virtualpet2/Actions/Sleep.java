@@ -2,7 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package virtualpet2;
+package virtualpet2.Actions;
+
+import virtualpet2.Pet.Pet;
+import virtualpet2.PetTypes.PetType;
 
 
 /**
@@ -62,8 +65,9 @@ public class Sleep {
     }
 
     /**
-     * Allows the pet to rest and increases its sleep level. If the pet is fully 
-     * rested (MAX_SLEEP), it informs the player. Otherwise, the sleep level increase
+     * Allows the pet to rest and increases its sleep level.If the pet is fully 
+ rested (MAX_SLEEP), it informs the player. Otherwise, the sleep level increase
+     * @param pet
      */
     public void putPetToSleep(Pet pet) {
         // If the pet is already fully rested, inform the player.
@@ -79,8 +83,9 @@ public class Sleep {
     }
 
     /**
-     * Checks if the pet is fully tired. This method is used to determine if
-     * the pet has reached the minimum sleep level.
+     * Checks if the pet is fully tired.This method is used to determine if
+ the pet has reached the minimum sleep level.
+     * @return 
      */
     public boolean isTired() {
         return sleepLevel <= MIN_SLEEP; // Return true if the pet is fully tired.
