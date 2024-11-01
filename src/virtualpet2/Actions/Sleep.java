@@ -7,87 +7,89 @@ package virtualpet2.Actions;
 import virtualpet2.Pet.Pet;
 import virtualpet2.PetTypes.PetType;
 
-
 /**
- *
+ * Sleep class manages the sleep level of a pet in the Virtual Pet Simulator.
+ * This class handles the pet’s sleep level, allowing for both gradual
+ * decreases in sleep as the pet becomes tired and increases when the pet
+ * rests. The sleep level is kept within a defined minimum and maximum.
+ * 
  * @author vrishabchetty
  */
 public class Sleep {
 
-    // Tracks the current sleep level of the pet (from 0 to 100).
+    // Tracks the current sleep level of the pet (0 = fully tired, 100 = fully rested).
     private double sleepLevel;
     
-    // The rate at which the pet gets tired over time (based on pet type).
+    // The rate at which the pet’s sleep level decreases, based on its type.
     private final double sleepRate; 
     
-    // Constant for the maximum sleep level the pet can have.
+    // Maximum sleep level for the pet.
     private static final int MAX_SLEEP = 100;
     
-    // Constant for the minimum sleep level (when the pet is fully tired).
+    // Minimum sleep level, indicating the pet is fully tired.
     private static final int MIN_SLEEP = 0;
 
     /**
-     * Constructor that initializes the sleep level based on the pet's current
-     * state and pet type.
+     * Constructor that initializes the pet's sleep level from its current state
+     * and sets the rate of sleep decay based on the pet's type.
      * 
-     * @param pet The pet object for which sleep is being managed.
-     * @param petType The type of the pet which affects how fast it gets tired.
+     * @param pet The pet whose sleep level will be managed.
+     * @param petType The type of pet, which affects the sleep decay rate.
      */
     public Sleep(Pet pet, PetType petType) {
-        this.sleepLevel = pet.getSleep(); // Initialize the sleep level from the pet object.
-        this.sleepRate = petType.getSleepRate(); // Determine how quickly this pet type gets tired.
+        this.sleepLevel = pet.getSleep(); // Initialize the sleep level from the pet’s current state.
+        this.sleepRate = petType.getSleepRate(); // Set the sleep decay rate based on pet type.
     }
 
     /**
-     * Returns the current sleep level of the pet.
+     * Retrieves the current sleep level of the pet.
      * 
-     * @return The current sleep level (an integer between 0 and 100).
+     * @return The pet’s current sleep level as a double.
      */
     public double getSleepLevel() {
         return sleepLevel;
     }
 
-    
-     //Decreases the pet's sleep level based on its sleep rate. If the sleep level
-  
+    /**
+     * Decreases the pet's sleep level gradually, simulating the pet becoming tired.
+     * This decrease respects the minimum sleep level, ensuring it doesn’t go below zero.
+     * 
+     * @param pet The pet whose sleep level is being decreased.
+     */
     public void decreaseSleep(Pet pet) {
-        // Ensure that the sleep level does not drop below the minimum value.
+        // Ensure that the sleep level does not fall below the minimum value.
         if (sleepLevel > MIN_SLEEP) {
-            sleepLevel = Math.max(sleepLevel - sleepRate, MIN_SLEEP); // Decrease sleep level.
+            sleepLevel = Math.max(sleepLevel - sleepRate, MIN_SLEEP); // Safely decrease sleep level.
             
-            // Inform the player that the sleep level has decreased.
-            System.out.println("\nSleep level decreased. Current sleep: "+ sleepLevel);
-            
-            // Update the pet's sleep level.
-            pet.setSleep(sleepLevel);
+            pet.setSleep(sleepLevel); // Update the pet’s sleep level
         }
-
     }
 
     /**
-     * Allows the pet to rest and increases its sleep level.If the pet is fully 
- rested (MAX_SLEEP), it informs the player. Otherwise, the sleep level increase
-     * @param pet
+     * Increases the pet's sleep level to simulate rest, up to the defined maximum.
+     * If the pet is already fully rested, it informs the user; otherwise, it
+     * increases the sleep level without exceeding the maximum.
+     * 
+     * @param pet The pet that is resting to increase its sleep level.
      */
     public void putPetToSleep(Pet pet) {
-        // If the pet is already fully rested, inform the player.
+        // Check if the pet is already fully rested.
         if (sleepLevel == MAX_SLEEP) {
         } else {
-            // Increase the sleep level when the pet rests, ensuring it doesn't exceed MAX_SLEEP.
+            // Increase the sleep level, ensuring it does not exceed MAX_SLEEP.
             sleepLevel = Math.min(sleepLevel + 20, MAX_SLEEP);
-            System.out.println("Your pet has rested. Current sleep: " + sleepLevel);
             
-            // Update the pet's sleep level.
-            pet.setSleep(sleepLevel);
+            pet.setSleep(sleepLevel); // Update the pet’s sleep level after resting
         }
     }
 
     /**
-     * Checks if the pet is fully tired.This method is used to determine if
- the pet has reached the minimum sleep level.
-     * @return 
+     * Checks if the pet is fully tired, determined by the sleep level reaching the minimum.
+     * Useful to prompt the user that the pet needs rest.
+     * 
+     * @return true if the pet is fully tired, false otherwise.
      */
     public boolean isTired() {
-        return sleepLevel <= MIN_SLEEP; // Return true if the pet is fully tired.
+        return sleepLevel <= MIN_SLEEP; // Returns true if the pet needs rest.
     }
 }
